@@ -11,16 +11,15 @@ var merchant = "AllianM"
 var mage = "Allian"
 var priest = "Allian"
 
-async function smart_move_stop(destination)
+function set_party()
 {
-	await smart_move(destination);
+    send_party_invite(warrior);
+    send_party_invite(mage);
+    send_party_invite(priest);
+    accept_party_invite(warrior);
+    accept_party_invite(mage);
+    accept_party_invite(priest);
 }
-
-async function move_stop(x, y)
-{
-	await move(x, y);
-}
-
 
 function register_pot_need(flag)
 {
@@ -60,33 +59,37 @@ function regen_hp_mp(flag)
 		use_skill("regen_mp");
 }
 
-function pick_target(monster_to_hunt)
+async function move_to_hunting_grounds()
+{		
+    var hunting_ground_x = get("hunting_ground_x");
+    var hunting_ground_y = get("hunting_ground_y");
+    var extra = Math.random() * (50 + 50) - 50;
+    await smart_move(hunting_ground_x + extra, hunting_ground_y + extra);
+}
+
+async function pick_target(monster_to_hunt)
 {
 	var target = get_targeted_monster();	
 	if(!target)
 	{		
-		target = get_nearest_monster({type:monster_to_hunt,no_target:true});				
+		target = get_nearest_monster({type:monster_to_hunt});				
 	}
 	if(!target)			
 	{
-		var hunting_ground_x = get("hunting_ground_x");
-		var hunting_ground_y = get("hunting_ground_y");
-		var extra = Math.random() * (50 + 50) - 50;
-		smart_move_stop(hunting_ground_x + extra, hunting_ground_y + extra);
+        await smart_move(monster_to_hunt);
+        set("hunting_ground_x", character.x);
+        set("hunting_ground_y", character.y);
 		return;
 	}
 	return target;
 }
 
-function follow_leader()
+async function follow_leader()
 {
 	var leaderEntity = get_player(warrior);
 	if(!leaderEntity)
 	{
-		var hunting_ground_x = get("hunting_ground_x");
-		var hunting_ground_y = get("hunting_ground_y");
-		var extra = Math.random() * (50 + 50) - 50;
-		smart_move_stop(hunting_ground_x + extra, hunting_ground_y + extra);
+		move_to_hunting_grounds();
 	}
 	var leaderEntity = get_player(warrior);
 	if(!leaderEntity)
@@ -97,14 +100,14 @@ function follow_leader()
 	return get_target_of(leaderEntity);
 }
 
-function close_target_distance(target)
+async function close_target_distance(target)
 {
 	if(!in_attack_range(target))
 	{
 		var moveX = character.x+(target.x-character.x)/2
 		var moveY = character.y+(target.y-character.y)/2
 		
-		move_stop(moveX,moveY);
+		await move(moveX,moveY);
 	}
 }
 
@@ -161,9 +164,9 @@ function give_pots()
 	send_item(warriorEntity, locate_item("mpot0"), mp_warrior + 0);
 }
 
-function deposit_all()
+async function deposit_all()
 {	
-	smart_move_stop("bank");	
+	await smart_move("bank");	
 	
 	for (var i = 0; i < 42; i ++)
 	{
