@@ -1,6 +1,7 @@
 load_code("Helper");
 
 setInterval(main, 250);
+setInterval(background, 5*1000);
 
 async function main()
 {
@@ -16,10 +17,8 @@ async function main()
 		return;
 	}
     
-    set_party();
-	register_pot_need("warrior_");		
+    		
 	loot();	
-	send_to_merchant();	
 	regen_hp_mp("warrior_");
 	
 	//solve target
@@ -33,6 +32,13 @@ async function main()
 	close_target_distance(target);
 	
 	try_attack(target);
+}
+
+function background()
+{
+    set_party();
+	register_pot_need("warrior_");
+	send_to_merchant();	
 }
 
 game.on("hit",function(data)

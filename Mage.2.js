@@ -1,6 +1,7 @@
 load_code("Helper");
 
 setInterval(main, 250);
+setInterval(background, 5*1000);
 
 async function main()
 {
@@ -15,11 +16,8 @@ async function main()
 		setTimeout(respawn,15000);
 		return;
 	}
-    
-    set_party();
-	register_pot_need("mage_");		
+    	
 	loot();	
-	send_to_merchant();
 	regen_hp_mp("mage_");
 	
 	//solve target
@@ -32,4 +30,11 @@ async function main()
 	close_target_distance(target);
 	
 	try_attack(target);
+}
+
+function background()
+{
+    set_party();
+	register_pot_need("mage_");
+	send_to_merchant();	
 }

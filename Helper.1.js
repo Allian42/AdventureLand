@@ -13,12 +13,15 @@ var priest = "Allian"
 
 function set_party()
 {
-    send_party_invite(warrior);
-    send_party_invite(mage);
-    send_party_invite(priest);
-    accept_party_invite(warrior);
-    accept_party_invite(mage);
-    accept_party_invite(priest);
+    if(!get_party())
+    {
+        send_party_invite(warrior);
+        send_party_invite(mage);
+        send_party_invite(priest);
+        accept_party_invite(warrior);
+        accept_party_invite(mage);
+        accept_party_invite(priest);
+    }
 }
 
 function register_pot_need(flag)
