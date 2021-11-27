@@ -22,14 +22,11 @@ async function main()
 	
 	//solve target
 	target = await follow_leader();
-	if(!target)
+	if(target)
 	{
-		return;
-	}
-		
-	close_target_distance(target);
-	
-	try_attack(target);
+		close_target_distance(target);	
+	    try_attack(target);
+    }
 }
 
 function background()

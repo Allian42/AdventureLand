@@ -6,6 +6,7 @@ var MP_pot_price = 20;
 var min_HP = character.max_hp - 100;
 var min_MP = character.max_mp - 100;
 var keep_items = ["hpot0", "mpot0", "stand0"];
+var monster_to_hunt = "bee";
 var warrior = "AllianW"
 var merchant = "AllianM"
 var mage = "Allian"
@@ -62,45 +63,37 @@ function regen_hp_mp(flag)
 		use_skill("regen_mp");
 }
 
-async function move_to_hunting_grounds()
-{		
-    var hunting_ground_x = get("hunting_ground_x");
-    var hunting_ground_y = get("hunting_ground_y");
-    var extra = Math.random() * (50 + 50) - 50;
-    await smart_move(hunting_ground_x + extra, hunting_ground_y + extra);
-}
-
-async function pick_target(monster_to_hunt)
+character.on("stacked",async function(data)
 {
-	var target = get_targeted_monster();	
-	if(!target)
-	{		
-		target = get_nearest_monster({type:monster_to_hunt});				
-	}
-	if(!target)			
-	{
+    var movement = Math.random() * (20 + 20) - 20;
+    await move(character.x + movement, character.y + movement);
+});
+
+async function pick_target()
+{
+    let target = get_targeted_monster();
+    if(!target)  target = get_nearest_monster({type:monster_to_hunt});
+    if(!target)
+    {
         await smart_move(monster_to_hunt);
-        set("hunting_ground_x", character.x);
-        set("hunting_ground_y", character.y);
-		return;
-	}
-	return target;
+        target = get_nearest_monster({type:monster_to_hunt});
+    }
+    set("hunting_ground", { x:character.x, y:character.y });
+    return target;
 }
 
 async function follow_leader()
 {
-	var leaderEntity = get_player(warrior);
-	if(!leaderEntity)
-	{
-		move_to_hunting_grounds();
-	}
-	var leaderEntity = get_player(warrior);
-	if(!leaderEntity)
-	{
-		log("leader not found")
-		return;
-	}
-	return get_target_of(leaderEntity);
+    let warrior_entity = get_player(warrior);    
+    if(!warrior_entity)
+    {
+        let hunting_ground = get("hunting_ground");
+        if(!hunting_ground) return;
+        await smart_move(hunting_ground.x, hunting_ground.y);
+    }
+    warrior_entity = get_player(warrior);
+    let target = get_target_of(warrior_entity);
+    return target;
 }
 
 async function close_target_distance(target)
@@ -116,11 +109,12 @@ async function close_target_distance(target)
 
 function try_attack(target)
 {
-	if(can_attack(target) && character.mp >= character.mp_cost)
+	if(!can_attack(target) || character.mp < character.mp_cost)
 	{
-		change_target(target);
-		attack(target);	
-	}
+        return;
+    }
+    change_target(target);
+    attack(target);	
 }
 
 function buy_pots()
