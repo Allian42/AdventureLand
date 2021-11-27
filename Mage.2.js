@@ -5,7 +5,6 @@ setInterval(background, 5*1000);
 
 async function main()
 {
-	//actions to wait
 	if(is_moving(character)) 
 	{
 		return;
@@ -20,14 +19,25 @@ async function main()
 	loot();	
 	regen_hp_mp("mage_");
 	
-	//solve target
-	target = await follow_leader();
+    setup_hunting_ground();
+
+    let warrior_entity = get_player(warrior);
+    let target = get_target_of(warrior_entity);
+    
 	if(target)
 	{
 		close_target_distance(target);	
 	    try_attack(target);
     }
 }
+
+function on_cm(name, data) 
+{
+    if(name == merchant && data == "merchant pull")
+    {
+        use_skill("magiport", merchant);
+    }
+};
 
 function background()
 {

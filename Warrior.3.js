@@ -16,18 +16,26 @@ async function main()
 	loot();	
 	regen_hp_mp("warrior_");
 	
-	let target = await pick_target();
-
-    close_target_distance(target);	
-    
-	try_attack(target);
+	let target = await warrior_target();
+	if(target)
+	{
+		close_target_distance(target);	
+	    try_attack(target);
+    }
 }
+character.on("cm",function(data)
+{
+    if(name == mage && data == "magiport")
+    {
+        accept_magiport(mage);
+    }
+});
 
-game.on("hit",function(data)
+character.on("hit",function(data)
 {
     if(!get_targeted_monster())
     {
-        change_target(target);
+        change_target(data.target);
     }
 });
 

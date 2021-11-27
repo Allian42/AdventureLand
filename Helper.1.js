@@ -6,11 +6,11 @@ var MP_pot_price = 20;
 var min_HP = character.max_hp - 100;
 var min_MP = character.max_mp - 100;
 var keep_items = ["hpot0", "mpot0", "stand0"];
-var monster_to_hunt = "bee";
+var monster_to_hunt = "snake";
 var warrior = "AllianW"
 var merchant = "AllianM"
 var mage = "Allian"
-var priest = "Allian"
+var priest = "AllianP"
 
 function set_party()
 {
@@ -69,31 +69,26 @@ character.on("stacked",async function(data)
     await move(character.x + movement, character.y + movement);
 });
 
-async function pick_target()
+async function warrior_target()
 {
     let target = get_targeted_monster();
     if(!target)  target = get_nearest_monster({type:monster_to_hunt});
-    if(!target)
-    {
-        await smart_move(monster_to_hunt);
-        target = get_nearest_monster({type:monster_to_hunt});
-    }
-    set("hunting_ground", { x:character.x, y:character.y });
     return target;
 }
 
-async function follow_leader()
+async function setup_hunting_ground()
 {
-    let warrior_entity = get_player(warrior);    
-    if(!warrior_entity)
+    let test_monster = get_nearest_monster({type:monster_to_hunt});
+    if(!test_monster)
     {
-        let hunting_ground = get("hunting_ground");
-        if(!hunting_ground) return;
-        await smart_move(hunting_ground.x, hunting_ground.y);
+        await smart_move(monster_to_hunt);
     }
     warrior_entity = get_player(warrior);
-    let target = get_target_of(warrior_entity);
-    return target;
+    if(!warrior_entity)
+    {
+        use_skill("magiport", warrior);
+        send_cm(warrior, "magiport");
+    }
 }
 
 async function close_target_distance(target)

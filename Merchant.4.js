@@ -19,13 +19,19 @@ async function main()
 	
 	await smart_move("potions");
 	
-	await buy_pots();
+	buy_pots();
 	
-	await move_to_hunting_grounds();
+    send_cm(mage,"merchant pull")
+    
+    await new Promise(r => setTimeout(r, 5*1000));
+    
+    accept_magiport(mage);
+
+    await new Promise(r => setTimeout(r, 10*1000));
 	
-	await give_pots();
-	
-	await new Promise(r => setTimeout(r, 5*1000));
+    give_pots();
+    
+    await use_skill("use_town");
 	
 	await deposit_all();
 	
