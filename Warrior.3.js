@@ -4,6 +4,8 @@ setInterval(main, 250);
 
 async function main()
 {
+    check_server();
+    
 	if(is_moving(character)) return;
 	
 	if(character.rip) 
@@ -12,12 +14,7 @@ async function main()
 		return;
 	}    
             
-    let mage_entity = get_player(mage);
-    if(!mage_entity.party)
-    {
-        send_party_invite(mage);
-    }
-    
+    send_party_invites();    
 	loot();	
     regen_hp_mp("warrior_");
     equip_better_items();
@@ -34,6 +31,15 @@ async function main()
 	{
 		close_target_distance(target);	
 	    try_attack(target);
+    }
+}
+
+function send_party_invites()
+{
+    let mage_entity = get_player(mage);
+    if(mage_entity && !mage_entity.party)
+    {
+        send_party_invite(mage);
     }
 }
 

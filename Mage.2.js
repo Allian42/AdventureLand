@@ -4,6 +4,8 @@ setInterval(main, 250);
 
 async function main()
 {
+    check_server();
+    
 	if(is_moving(character)) 
 	{
 		return;

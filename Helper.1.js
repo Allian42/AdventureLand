@@ -1,76 +1,87 @@
 //params
+var server_region = "US"
+var server_identifier = "III"
 var min_HP = character.max_hp - 100;
 var min_MP = character.max_mp - 100;
-var keep_items = ["hpot0", "mpot0", "stand0"];
+var keep_items_deposit = ["hpot0", "mpot0", "stand0", "blade", "staff", "wshield", "helmet", "chest", "gloves", "pants", "shoes"];
+var keep_items_hunt = ["hpot0", "mpot0"];
 var monster_to_hunt = "snake";
 var warrior = "AllianW"
 var merchant = "AllianM"
 var mage = "Allian"
 var priest = "AllianP"
 
-//change_server("US","III");
-
 const my_wait = time => new Promise(p => setTimeout(p, time));
+
+function check_server()
+{
+    if(parent.server_region != server_region || parent.server_identifier != server_identifier)
+        change_server(server_region, server_identifier);
+}
 
 function equip_better_items()
 {
-    for (var i = 0; i < 42; i ++)
+    for (var i = 0; i < 42; i++)
     {
         let inv_item = character.items[i];
-        if(!inv_item)
-            return;
-        
+        if(!inv_item || !inv_item.hasOwnProperty("level"))
+        {
+            continue;
+        }
+
+        let comparing_slot = undefined;        
         switch(inv_item.name)
         {
             case "staff":
-                if(inv_item.level > character.slots.mainhand.level)
-                    equip(i);
+                comparing_slot = character.slots.mainhand;
                 break;
             case "blade":
-                if(inv_item.level > character.slots.mainhand.level)
-                    equip(i);
+                comparing_slot = character.slots.mainhand;
                 break;
             case "wshield":
-                if(inv_item.level > character.slots.offhand.level)
-                    equip(i);
+                comparing_slot = character.slots.offhand;
                 break;
             case "helmet":
-                if(inv_item.level > character.slots.helmet.level)
-                    equip(i);
+                comparing_slot = character.slots.helmet;
                 break;
             case "coat":
-                if(inv_item.level > character.slots.chest.level)
-                    equip(i);
+                comparing_slot = character.slots.coat;
                 break;
             case "gloves":
-                if(inv_item.level > character.slots.gloves.level)
-                    equip(i);
+                comparing_slot = character.slots.gloves;
                 break;
             case "pants":
-                if(inv_item.level > character.slots.pants.level)
-                    equip(i);
+                comparing_slot = character.slots.pants;
                 break;
             case "shoes":
-                if(inv_item.level > character.slots.shoes.level)
-                    equip(i);
+                comparing_slot = character.slots.shoes;
                 break;
             default:
                 break;
         }
+
+        if(!comparing_slot || !comparing_slot.hasOwnProperty("level"))
+            return;
+            
+        if(inv_item.level > comparing_slot.level)
+            equip(i);
     }
 }
 
 function register_item_need(flag)
 {
 	set(flag + "hp", quantity("hpot0"));
-	set(flag + "mp", quantity("mpot0"));
-	set(flag + "mainhand", character.slots.mainhand.level);
-	set(flag + "offhand", character.slots.offhand.level);
-	set(flag + "helmet", character.slots.helmet.level);
-	set(flag + "chest", character.slots.chest.level);
-	set(flag + "gloves", character.slots.gloves.level);
-	set(flag + "pants", character.slots.pants.level);
-	set(flag + "shoes", character.slots.shoes.level);
+    set(flag + "mp", quantity("mpot0"));
+
+    let list_slots = ["mainhand", "offhand", "helmet", "chest", "gloves", "pants", "shoes"];
+    
+    for (const a_slot of list_slots) 
+    {
+        if(character.slots[a_slot])
+            set(flag + a_slot, character.slots[a_slot].level);
+        else
+            set(flag + a_slot, 0);
+    }
 }
 
 function send_to_merchant()
@@ -81,8 +92,9 @@ function send_to_merchant()
 		send_gold(MerchantEntity, character.gold);
 		for (var i = 0; i < 42; i ++)
 		{
-			if(character.items[i] && !keep_items.includes(character.items[i].name))
-				send_item(MerchantEntity,i,character.items[i].q);
+            let item = character.items[i];
+			if(item && !keep_items_hunt.includes(item.name))
+				send_item(MerchantEntity,i,item.q);
 		}
 	}
 }
