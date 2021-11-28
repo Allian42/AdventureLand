@@ -14,24 +14,29 @@ async function main()
 		setTimeout(respawn,15000);
 		return;
 	}
-    	
+    
 	loot();	
-	regen_hp_mp("mage_");
+    regen_hp_mp("mage_");
+    equip_better_items();
+    register_item_need("mage_");
+    send_to_merchant();
 	
-    let test_monster = get_nearest_monster({type:monster_to_hunt});
-    if(!test_monster)
+    let warrior_entity = get_player(warrior);
+
+    if(!get_nearest_monster({type:monster_to_hunt}))
     {
         await smart_move(monster_to_hunt);
-    }
-    warrior_entity = get_player(warrior);
+        return;
+    }    
+
     if(!warrior_entity)
     {
         use_skill("magiport", warrior);
         send_cm(warrior, "magiport");
+        return;
     }
-    let warrior_entity = get_player(warrior);
-    let target = get_target_of(warrior_entity);
-
+    
+    let target = get_target_of(warrior_entity);    	
 	if(target)
 	{
 		close_target_distance(target);	
@@ -41,14 +46,16 @@ async function main()
 
 character.on("cm",function(data)
 {
-    if(data.name == merchant && data.message == "merchant pull")
+    if(data.name.startsWith("Allian") && data.message == "magiport pull")
     {
-        use_skill("magiport", merchant);
-    }
-
-    if(data.name == merchant && data.message == "send stuff")
-    {
-        send_cm(merchant, { hp:quantity("hpot0"), mp:quantity("mpot0") })
-        send_to_merchant();
+        use_skill("magiport", data.name);
     }
 });
+
+function on_party_invite(name) 
+{
+    if(name.startsWith("Allian"))
+    {
+        accept_party_invite(name)
+    }
+  }

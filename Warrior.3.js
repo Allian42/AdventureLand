@@ -12,21 +12,24 @@ async function main()
 		return;
 	}    
             
-    if(!get_party())
+    let mage_entity = get_player(mage);
+    if(!mage_entity.party)
     {
-        send_party_invite(warrior);
         send_party_invite(mage);
-        send_party_invite(priest);
     }
-
+    
 	loot();	
     regen_hp_mp("warrior_");
+    equip_better_items();
+    register_item_need("warrior_");
+    send_to_merchant();
     
 	let target = get_targeted_monster();
     if(!target)
     {
         target = get_nearest_monster({type:monster_to_hunt});
     }
+    
 	if(target)
 	{
 		close_target_distance(target);	
@@ -39,12 +42,6 @@ character.on("cm",function(data)
     if(data.name == mage && data.message == "magiport")
     {
         accept_magiport(mage);
-    }
-
-    if(data.name == merchant && data.message == "send stuff")
-    {
-        send_cm(merchant, { hp:quantity("hpot0"), mp:quantity("mpot0") })
-        send_to_merchant();
     }
 });
 
