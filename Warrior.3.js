@@ -1,6 +1,6 @@
 load_code("Helper");
 
-console.log("warrior")
+console.log("warrior");
 
 setInterval(main, interval);
 

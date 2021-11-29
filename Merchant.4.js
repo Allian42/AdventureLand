@@ -3,7 +3,7 @@ load_code("Helper");
 //params
 var pot_to_buy = 900;
 
-console.log("merchant")
+console.log("merchant");
 
 set("flag_upgrade", 0);
 set("merchant_flag", "close");

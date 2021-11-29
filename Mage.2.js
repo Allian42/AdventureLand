@@ -1,6 +1,6 @@
 load_code("Helper");
 
-console.log("mage")
+console.log("mage");
 
 setInterval(main, interval);
 

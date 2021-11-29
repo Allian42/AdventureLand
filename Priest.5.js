@@ -1,6 +1,6 @@
 load_code("Helper");
 
-console.log("priest")
+console.log("priest");
 
 setInterval(main, interval);
 
