@@ -3,6 +3,8 @@ load_code("Helper");
 console.log("mage");
 
 setInterval(main, interval);
+setInterval(register_item_need, long_interval);
+setInterval(ask_party, long_interval);
 
 async function main()
 {
@@ -13,17 +15,14 @@ async function main()
 		return;
 	}
 	
-	if(character.rip) 
-	{
-		setTimeout(respawn,15000);
-		return;
-	}
+    if(character.rip) 
+    {
+        respawn(); 
+        return;
+    } 
     
 	loot();	
-    regen_hp_mp("mage_");
-    equip_better_items();
-    register_item_need("mage_");
-    send_to_merchant();
+    regen_hp_mp();
 	
     let warrior_entity = get_player(warrior);
     let priest_entity = get_player(priest);
@@ -37,14 +36,12 @@ async function main()
     if(!warrior_entity)
     {
         use_skill("magiport", warrior);
-        send_cm(warrior, "magiport");
         return;
     }
 
     if(!priest_entity)
     {
         use_skill("magiport", priest);
-        send_cm(priest, "magiport");
         return;
     }
     
@@ -56,18 +53,8 @@ async function main()
     }
 }
 
-character.on("cm",function(data)
+function ask_party()
 {
-    if(data.name.startsWith("Allian") && data.message == "magiport pull")
-    {
-        use_skill("magiport", data.name);
-    }
-});
-
-function on_party_invite(name) 
-{
-    if(name.startsWith("Allian"))
-    {
-        accept_party_invite(name)
-    }
+    if(!character.party)
+        send_party_request(warrior)
 }

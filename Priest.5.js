@@ -3,6 +3,8 @@ load_code("Helper");
 console.log("priest");
 
 setInterval(main, interval);
+setInterval(register_item_need, long_interval);
+setInterval(ask_party, long_interval);
 
 async function main()
 {
@@ -13,17 +15,14 @@ async function main()
 		return;
 	}
 	
-	if(character.rip) 
-	{
-		setTimeout(respawn,15000);
-		return;
-	}
+    if(character.rip) 
+    {
+        respawn(); 
+        return;
+    } 
     
 	loot();	
-    regen_hp_mp("priest_");
-    equip_better_items();
-    register_item_need("priest_");
-    send_to_merchant();
+    regen_hp_mp();
 	
     let warrior_entity = get_player(warrior);
     if(warrior_entity.hp + character.attack < warrior_entity.max_hp)
@@ -41,18 +40,8 @@ async function main()
     }
 }
 
-character.on("cm",function(data)
+function ask_party()
 {
-    if(data.name == mage && data.message == "magiport")
-    {
-        accept_magiport(mage);
-    }
-});
-
-function on_party_invite(name) 
-{
-    if(name.startsWith("Allian"))
-    {
-        accept_party_invite(name)
-    }
+    if(!character.party)
+        send_party_request(warrior)
 }
