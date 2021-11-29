@@ -2,7 +2,7 @@ load_code("Helper");
 
 console.log("warrior")
 
-setInterval(main, 250);
+setInterval(main, interval);
 
 async function main()
 {

@@ -1,11 +1,14 @@
 load_code("Helper");
 
+//params
+var pot_to_buy = 900;
+
 console.log("merchant")
 
 set("flag_upgrade", 0);
 set("merchant_flag", "close");
 
-setInterval(main, 250);
+setInterval(main, interval);
 
 async function main()
 {
@@ -75,6 +78,7 @@ async function main()
             break;
         case "distribute_items":
             distribute_items();
+            await my_wait(5*1000);
             set("merchant_flag", "return_town");
             break;
         case "return_town":
@@ -108,8 +112,8 @@ async function main()
 
 function buy_pots()
 {
-    buy("hpot0", 300 - quantity("hpot0"));
-	buy("mpot0", 300 - quantity("mpot0"));
+    buy("hpot0", pot_to_buy - quantity("hpot0"));
+	buy("mpot0", pot_to_buy - quantity("mpot0"));
 }
 
 function buy_items()
@@ -142,12 +146,12 @@ async function async_upgrade(item)
 
 function distribute_pots()
 {
-    send_item(warrior, locate_item("hpot0"), 100 - get("warrior_hp"));
-    send_item(warrior, locate_item("mpot0"), 100 - get("warrior_mp"));
-    send_item(mage, locate_item("hpot0"), 100 - get("mage_hp"));
-    send_item(mage, locate_item("mpot0"), 100 - get("mage_mp"));
-    send_item(priest, locate_item("hpot0"), 100 - get("priest_hp"));
-    send_item(priest, locate_item("mpot0"), 100 - get("priest_mp"));
+    send_item(warrior, locate_item("hpot0"), (pot_to_buy/3) - get("warrior_hp"));
+    send_item(warrior, locate_item("mpot0"), (pot_to_buy/3) - get("warrior_mp"));
+    send_item(mage, locate_item("hpot0"), (pot_to_buy/3) - get("mage_hp"));
+    send_item(mage, locate_item("mpot0"), (pot_to_buy/3) - get("mage_mp"));
+    send_item(priest, locate_item("hpot0"), (pot_to_buy/3) - get("priest_hp"));
+    send_item(priest, locate_item("mpot0"), (pot_to_buy/3) - get("priest_mp"));
 }
 
 function distribute_items()

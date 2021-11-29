@@ -2,7 +2,7 @@ load_code("Helper");
 
 console.log("priest")
 
-setInterval(main, 250);
+setInterval(main, interval);
 
 async function main()
 {
