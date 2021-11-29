@@ -25,9 +25,15 @@ async function main()
     register_item_need("priest_");
     send_to_merchant();
 	
-    let warrior_entity = get_player(warrior);    
-    let target = get_target_of(warrior_entity);  
+    let warrior_entity = get_player(warrior);
+    if(warrior_entity.hp + character.attack < warrior_entity.max_hp)
+        heal(warrior_entity);
 
+    let mage_entity = get_player(mage);
+    if(mage_entity.hp + character.attack < mage_entity.max_hp)
+        heal(mage_entity);
+
+    let target = get_target_of(warrior_entity);
 	if(target)
 	{
 		close_target_distance(target);	
