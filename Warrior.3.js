@@ -1,11 +1,13 @@
 load_code("Helper");
 
+console.log("warrior")
+
 setInterval(main, 250);
 
 async function main()
 {
     check_server();
-    
+
 	if(is_moving(character)) return;
 	
 	if(character.rip) 
@@ -40,6 +42,12 @@ function send_party_invites()
     if(mage_entity && !mage_entity.party)
     {
         send_party_invite(mage);
+    }
+
+    let priest_entity = get_player(priest);
+    if(priest_entity && !priest_entity.party)
+    {
+        send_party_invite(priest);
     }
 }
 

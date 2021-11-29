@@ -1,15 +1,18 @@
 //params
 var server_region = "US"
-var server_identifier = "III"
+var server_identifier = "II"
 var min_HP = character.max_hp - 100;
 var min_MP = character.max_mp - 100;
-var keep_items_deposit = ["hpot0", "mpot0", "stand0", "blade", "staff", "wshield", "helmet", "chest", "gloves", "pants", "shoes"];
+var list_gear = ["blade", "staff", "wand", "wshield", "helmet", "coat", "gloves", "pants", "shoes"];
+var keep_items_deposit = ["hpot0", "mpot0", "stand0", "blade", "staff", "wand", "wshield", "helmet", "coat", "gloves", "pants", "shoes"];
 var keep_items_hunt = ["hpot0", "mpot0"];
 var monster_to_hunt = "snake";
 var warrior = "AllianW"
 var merchant = "AllianM"
 var mage = "Allian"
 var priest = "AllianP"
+
+console.log("helper")
 
 const my_wait = time => new Promise(p => setTimeout(p, time));
 
@@ -45,7 +48,7 @@ function equip_better_items()
                 comparing_slot = character.slots.helmet;
                 break;
             case "coat":
-                comparing_slot = character.slots.coat;
+                comparing_slot = character.slots.chest;
                 break;
             case "gloves":
                 comparing_slot = character.slots.gloves;
@@ -60,11 +63,20 @@ function equip_better_items()
                 break;
         }
 
-        if(!comparing_slot || !comparing_slot.hasOwnProperty("level"))
-            return;
+        let gear_level = 0
+
+        if(comparing_slot)
+        {
+            gear_level = comparing_slot.level;
+        }
             
-        if(inv_item.level > comparing_slot.level)
-            equip(i);
+        if(inv_item.level > gear_level)
+        {
+            if(inv_item.name == "blade")
+                equip(i, "mainhand");
+            else
+                equip(i);
+        }
     }
 }
 

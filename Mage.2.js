@@ -1,11 +1,13 @@
 load_code("Helper");
 
+console.log("mage")
+
 setInterval(main, 250);
 
 async function main()
 {
     check_server();
-    
+
 	if(is_moving(character)) 
 	{
 		return;
@@ -24,6 +26,7 @@ async function main()
     send_to_merchant();
 	
     let warrior_entity = get_player(warrior);
+    let priest_entity = get_player(priest);
 
     if(!get_nearest_monster({type:monster_to_hunt}))
     {
@@ -35,6 +38,13 @@ async function main()
     {
         use_skill("magiport", warrior);
         send_cm(warrior, "magiport");
+        return;
+    }
+
+    if(!priest_entity)
+    {
+        use_skill("magiport", priest);
+        send_cm(priest, "magiport");
         return;
     }
     
@@ -60,4 +70,4 @@ function on_party_invite(name)
     {
         accept_party_invite(name)
     }
-  }
+}
