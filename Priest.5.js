@@ -3,7 +3,6 @@ load_code("Helper");
 console.log("priest");
 
 setInterval(main, interval);
-setInterval(register_item_need, long_interval);
 setInterval(ask_party, long_interval);
 
 async function main()
@@ -23,6 +22,7 @@ async function main()
     
 	loot();	
     regen_hp_mp();
+    register_item_need();
 	
     let warrior_entity = get_player(warrior);
     if(warrior_entity.hp + character.attack < warrior_entity.max_hp)

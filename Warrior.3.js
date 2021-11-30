@@ -3,7 +3,6 @@ load_code("Helper");
 console.log("warrior");
 
 setInterval(main, interval);
-setInterval(register_item_need, long_interval);
 
 async function main()
 {
@@ -27,6 +26,7 @@ async function main()
                
 	loot();	
     regen_hp_mp();
+    register_item_need();
     
 	let target = get_targeted_monster();
     if(!target)

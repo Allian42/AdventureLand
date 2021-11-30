@@ -1,8 +1,10 @@
+load_code("Snippets");
+
 //params
 var server_region = "US"
-var server_identifier = "II"
+var server_identifier = "I"
 var keep_items = ["hpot0", "mpot0", "stand0"];
-var monster_to_hunt = "arcticbee";
+var monster_to_hunt = "scorpion";
 var warrior = "AllianW"
 var merchant = "AllianM"
 var mage = "Allian"
@@ -59,13 +61,13 @@ function check_server()
 
 function register_item_need()
 {
-	set(character.name + "hp", quantity("hpot0"));
-    set(character.name + "mp", quantity("mpot0"));
+	set(character.name + "_hp", quantity("hpot0"));
+    set(character.name + "_mp", quantity("mpot0"));
 }
 
 function send_to_merchant()
 {
-    send_gold(MerchantEntity, character.gold);
+    send_gold(merchant, character.gold);
     for (var i = 0; i < 42; i ++)
     {
         let item = character.items[i];

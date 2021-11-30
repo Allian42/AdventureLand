@@ -1,20 +1,22 @@
 load_code("Helper");
 
 //params
-var pot_to_buy = 900;
-set("merchant_flag", "close");
+var pot_to_buy = 900; 
 
 console.log("merchant");
 
-setInterval(main, interval);
+main();
+setInterval(main, 10*60*1000);
 
 async function main()
 {
+    set_message("main")
     check_server();
 
 	if(is_moving(character)) 
 	{
-		return;
+        setTimeout(main,10*1000);
+        return;
 	}
 	
     if(character.rip) 
@@ -23,67 +25,26 @@ async function main()
         return;
     } 
 
-    let merchant_flag = get("merchant_flag");
-    if(!merchant_flag) merchant_flag  = "close";
-    
-    switch (merchant_flag)
-    {
-        case "close":
-            close_stand();
-            set("merchant_flag", "move_potions");
-            break;
-        case "move_potions":
-            smart_move("potions");
-            set("merchant_flag", "buy_pots");
-            break;            
-        case "buy_pots":
-            buy_pots();
-            set("merchant_flag", "ask_magiport");
-            break;
-        case "ask_magiport":
-            send_cm(mage, "magiport pull");
-            set("merchant_flag", "distribute_pots");
-            break;
-        case "distribute_pots":
-            if(!get_player(mage))
-                break;
-            distribute_pots();
-            set("merchant_flag", "ask_items");
-            break;
-        case "ask_items":
-            send_cm(warrior, "retrieve");
-            send_cm(mage, "retrieve");
-            send_cm(priest, "retrieve");
-            await my_wait(10*1000);
-            set("merchant_flag", "return_town");
-            break;
-        case "return_town":
-            await use_skill("use_town");
-            set("merchant_flag", "move_bank");
-            break;
-        case "move_bank":
-            smart_move("bank");
-            set("merchant_flag", "store_items");
-            break;
-        case "store_items":
-            store_all_items();
-            set("merchant_flag", "move_selling_spot");
-            break;
-        case "move_selling_spot":
-            smart_move({map:"main", x:-123, y:23})
-            set("merchant_flag", "setup_shop");
-            break;
-        case "setup_shop":
-            open_stand();
-            await my_wait(10*60*1000);
-            set("merchant_flag", "close");
-            break;
-        default:
-            set("flag_upgrade", 0);
-            set("merchant_flag", "close");
-            log("error: default case")
-            break;
-    }
+    close_stand();
+    await smart_move("potions");
+    buy_pots();
+    send_cm(mage, "magiport pull");
+    await my_wait(5*1000);
+    distribute_pots();
+    send_cm(warrior, "retrieve");
+    send_cm(mage, "retrieve");
+    send_cm(priest, "retrieve");
+    await use_skill("mluck", warrior);
+    await use_skill("mluck", mage);
+    await use_skill("mluck", priest);
+    await my_wait(1000);
+    await use_skill("use_town");
+    await my_wait(3*1000);
+    await smart_move("bank");
+    log(1)
+    store_all_items();
+    await smart_move({map:"main", x:-123, y:23})
+    open_stand();
 }
 
 function buy_pots()
@@ -109,5 +70,5 @@ function store_all_items()
         let item = character.items[i];
 		if(item && !keep_items.includes(item.name))
 			bank_store(i);
-	}
+    }
 }
