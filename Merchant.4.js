@@ -35,7 +35,7 @@ async function main()
     open_stand();
 }
 
-async function ask_magiport
+async function ask_magiport()
 {
     magiport_accepted = false;
     send_cm(mage, "magiport pull");
