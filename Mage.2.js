@@ -1,25 +1,14 @@
+//startup
 load_code("Helper");
-
 console.log("mage");
 
+//loops
 setInterval(main, interval);
 setInterval(ask_party, long_interval);
 
+//functions
 async function main()
-{
-    check_server();
-
-	if(is_moving(character)) 
-	{
-		return;
-	}
-	
-    if(character.rip) 
-    {
-        respawn(); 
-        return;
-    } 
-    
+{	
 	loot();	
     regen_hp_mp();
     register_item_need();
@@ -27,23 +16,14 @@ async function main()
     let warrior_entity = get_player(warrior);
     let priest_entity = get_player(priest);
 
-    if(!get_nearest_monster({type:monster_to_hunt}))
-    {
-        await smart_move(monster_to_hunt);
-        return;
-    }    
-
     if(!warrior_entity)
-    {
-        use_skill("magiport", warrior);
-        return;
-    }
+        await use_skill("magiport", warrior);
 
     if(!priest_entity)
-    {
-        use_skill("magiport", priest);
+        await use_skill("magiport", priest);
+
+    if(!warrior_entity || !priest_entity)
         return;
-    }
     
     let target = get_target_of(warrior_entity);    	
 	if(target)
@@ -51,10 +31,4 @@ async function main()
 		close_target_distance(target);	
 	    try_attack(target);
     }
-}
-
-function ask_party()
-{
-    if(!character.party)
-        send_party_request(warrior)
 }

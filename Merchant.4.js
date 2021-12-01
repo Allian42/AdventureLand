@@ -1,35 +1,24 @@
-load_code("Helper");
-
 //params
 var pot_to_buy = 900; 
+var merchant_interval = 10*60*1000;
+var selling_spot = {map:"main", x:-123, y:23};
 
+//startup
+load_code("Helper");
 console.log("merchant");
 
+//loops
 main();
-setInterval(main, 10*60*1000);
+setInterval(main, merchant_interval);
 
+//functions
 async function main()
 {
     set_message("main")
-    check_server();
-
-	if(is_moving(character)) 
-	{
-        setTimeout(main,10*1000);
-        return;
-	}
-	
-    if(character.rip) 
-    {
-        respawn(); 
-        return;
-    } 
-
     close_stand();
-    await smart_move("potions");
+    await safe_smart_move("potions");
     buy_pots();
-    send_cm(mage, "magiport pull");
-    await my_wait(5*1000);
+    ask_magiport();
     distribute_pots();
     send_cm(warrior, "retrieve");
     send_cm(mage, "retrieve");
@@ -40,27 +29,34 @@ async function main()
     await my_wait(1000);
     await use_skill("use_town");
     await my_wait(3*1000);
-    await smart_move("bank");
-    log(1)
+    await safe_smart_move("bank");
     store_all_items();
-    await smart_move({map:"main", x:-123, y:23})
+    await safe_smart_move(selling_spot)
     open_stand();
+}
+
+async function ask_magiport
+{
+    magiport_accepted = false;
+    send_cm(mage, "magiport pull");
+    while (!magiport_accepted)
+        await my_wait(1000);
 }
 
 function buy_pots()
 {
-    buy("hpot0", pot_to_buy - quantity("hpot0"));
-	buy("mpot0", pot_to_buy - quantity("mpot0"));
+    buy("hpot1", pot_to_buy - quantity("hpot1"));
+	buy("mpot1", pot_to_buy - quantity("mpot1"));
 }
 
 function distribute_pots()
 {
-    send_item(warrior, locate_item("hpot0"), (pot_to_buy/3) - get(warrior + "_hp"));
-    send_item(warrior, locate_item("mpot0"), (pot_to_buy/3) - get(warrior + "_mp"));
-    send_item(mage, locate_item("hpot0"), (pot_to_buy/3) - get(mage + "_hp"));
-    send_item(mage, locate_item("mpot0"), (pot_to_buy/3) - get(mage + "_mp"));
-    send_item(priest, locate_item("hpot0"), (pot_to_buy/3) - get(priest + "_hp"));
-    send_item(priest, locate_item("mpot0"), (pot_to_buy/3) - get(priest + "_mp"));
+    send_item(warrior, locate_item("hpot1"), (pot_to_buy/3) - get(warrior + "_hp"));
+    send_item(warrior, locate_item("mpot1"), (pot_to_buy/3) - get(warrior + "_mp"));
+    send_item(mage, locate_item("hpot1"), (pot_to_buy/3) - get(mage + "_hp"));
+    send_item(mage, locate_item("mpot1"), (pot_to_buy/3) - get(mage + "_mp"));
+    send_item(priest, locate_item("hpot1"), (pot_to_buy/3) - get(priest + "_hp"));
+    send_item(priest, locate_item("mpot1"), (pot_to_buy/3) - get(priest + "_mp"));
 }
 
 function store_all_items()

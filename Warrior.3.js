@@ -1,54 +1,75 @@
+//startup
 load_code("Helper");
-
 console.log("warrior");
 
+//loops
 setInterval(main, interval);
+setInterval(ask_party, long_interval);
 
+//functions
 async function main()
-{
-    check_server();
-
-	if(is_moving(character)) 
-	{
-		return;
-	}
-	
-    if(character.rip) 
-    {
-        respawn(); 
-        return;
-    } 
-    
-    if(!is_on_cooldown("charge"))
-    {
-        use_skill("charge");
-    }
-               
+{	               
 	loot();	
     regen_hp_mp();
     register_item_need();
     
-	let target = get_targeted_monster();
-    if(!target)
-    {
-        target = get_nearest_monster({type:monster_to_hunt});
-    }
+    let mage_entity = get_player(mage);
+    let priest_entity = get_player(priest);
+
+    if(!mage_entity || !priest_entity)
+        return;
     
+    if(!is_on_cooldown("charge"))
+        use_skill("charge");
+
+    let target = pick_target();    
 	if(target)
 	{
-        if(!is_on_cooldown("taunt"))
-        {
-            use_skill("taunt", target);
-        }
 		close_target_distance(target);	
 	    try_attack(target);
     }
 }
 
-character.on("hit",function(data)
+function pick_target()
 {
-    if(!get_targeted_monster())
+    let target = undefined;
+    for(id in parent.entities)
+    {        
+        let monster = parent.entities[id];
+
+        if(monster.type != "monster")
+            continue;
+
+        if(monster.target != warrior)
+            continue;
+
+        if(!target)
+        {
+            target = monster;
+            continue;
+        }
+
+        if(monster.hp < target.hp)
+        {
+            target = monster;
+            continue;
+        }
+    }
+    
+    if(!target)
+        target = get_nearest_monster({type:monster_to_hunt});
+
+    return target;
+}
+
+//events
+game.on("hit",function(data)
+{
+    if(data.target == mage || data.target == priest || data.target == merchant)
     {
-        change_target(data.target);
+        console.log(data);
+        let monster = parent.entities[data.actor];
+        if(!is_on_cooldown("taunt"))
+            use_skill("taunt", monster);
     }
 });
